@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+# Visual Studio
+*.vcxproj*
+*.tlog
+*.lastbuildstate
+*.idb
+*.pdb
+*.exe.recipe*
+*.ilk
+*.log
