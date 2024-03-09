@@ -7,6 +7,8 @@
 #include "source/Colors.hpp"
 #include "source/Constants.hpp"
 #include "source/Global.hpp"
+#include "source/CollisionEntity.hpp"
+#include "source/Minimap.hpp"
 #include <list>
 #include <set>
 // UPDATE FUNCTION FOR DEBUG WINDOW
@@ -36,9 +38,8 @@ int main() {
     std::set<Entity*> SET_OF_ENTITIES;
     SET_OF_ENTITIES.insert(&player);
     // Closing not needed windows
-    GLOBAL::debug.window.close();
+    GLOBAL::debug.window.close();  
     GLOBAL::op.window.close();
-
     while (GLOBAL::game.window.isOpen()) {
         GLOBAL::game.window.clear(Colour::getColour(COLOUR::BASE_SKY));
 
