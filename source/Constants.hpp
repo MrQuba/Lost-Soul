@@ -15,19 +15,17 @@ namespace CONSTANTS {
 	const sf::Keyboard::Key ZOOM_IN = sf::Keyboard::Num9;
 	const sf::Keyboard::Key ZOOM_OUT = sf::Keyboard::Num0;
 	const sf::Keyboard::Key JUMP = sf::Keyboard::Space;
-	const sf::Keyboard::Key HEALTH_UP = sf::Keyboard::Num1;
-	const sf::Keyboard::Key HEALTH_DOWN = sf::Keyboard::Num2;
-	const sf::Keyboard::Key INSANITY_UP = sf::Keyboard::Num3;
-	const sf::Keyboard::Key INSANITY_DOWN = sf::Keyboard::Num4;
 	// ENVIROMENT
 	const static float GRAVITY = 0.098f;
 	const static int SECTOR_I_WIDTH = 12800;
 	const static int SECOTR_I_HEIGHT = 720;
 	// PLAYER_STATS
 	const static int BASE_HEALTH = 100;
+	const static int MAX_HEALTH = 400;
 	const static float HUD_HEIGHT = 16;
 	const static int MAX_INSANITY = 200;
 	const sf::Vector2f BASE_SPEED = sf::Vector2f(5.f, 5.f);
 	const sf::Vector2f MAX_SPEED = sf::Vector2f(1.5f, 1.5f);
     static int BASE_EFFECT_DURATION = 100;
+	static const sf::Vector2f PLAYER_SIZE = sf::Vector2f(13, 24);
 };

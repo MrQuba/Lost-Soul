@@ -6,7 +6,7 @@
 #include "InstantEffect.hpp"
 #pragma once
 namespace Effects {
-	OverTimeEffect insanity(200 , 1, 1);
+	OverTimeEffect insanity(5, 1, 1);
 	OverTimeEffect poison(5, -1, 10);
-	InstantEffect heal_insanity(20, 1);
+	InstantEffect heal_insanity(-2, 1);
 }

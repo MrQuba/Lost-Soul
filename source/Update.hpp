@@ -2,7 +2,6 @@
 #include <set>
 #include "ExitCodes.hpp"
 #include "Entity.hpp"
-#include "CollisionEntity.hpp"
 #include "Global.hpp"
 #include "Constants.hpp"
 #include "EntityManager.hpp"
@@ -27,13 +26,6 @@ public:
         for (Entity* entity : entitiesToRemove) {
             GLOBAL::ENTITIES_SET_POINTER->erase(entity);
             delete entity; 
-        }
-        return EXIT_CODE::OPERATION_SUCCESFUL;
-    }
-    static EXIT_CODE CollisionEntities(std::set<CollisionEntity*> SOCE, sf::Sprite player) {
-        if (SOCE.empty()) return EXIT_CODE::SET_IS_EMPTY;
-        for (CollisionEntity* ent_ptr : SOCE) {
-            ent_ptr->Update(GLOBAL::game.window, player);
         }
         return EXIT_CODE::OPERATION_SUCCESFUL;
     }

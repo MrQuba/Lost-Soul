@@ -12,11 +12,6 @@ public:
 	Triple<int, int, bool> update() override {
 		return Triple<int, int, bool>(this->toChange, this->change, this->duration > 0);
 	}
-	//void clear(std::vector<Effect*>*efV) override {
-	//		if (this->duration <= 0) {
-	//			efV->erase(this);
-	//		}
-	//}
 protected:
 	int toChange;
 	int change;

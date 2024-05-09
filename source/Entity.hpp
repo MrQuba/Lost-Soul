@@ -8,19 +8,28 @@
 #include "Ground.hpp"
 #include "Effect.hpp"
 #include "Triple.hpp"
-#include "Item.hpp"
 class Entity {
 public:
-	unsigned int health;
-	unsigned int insanity;
-	Entity(std::string pathToTexture, sf::IntRect txt, sf::Vector2f scale) {
+	unsigned int health = 9999;
+	unsigned int insanity = 0;
+	sf::FloatRect boundingBox;
+	Entity(std::string pathToTexture, sf::IntRect txt, sf::Vector2f scale, int iframes = 30) {
 		gravity = true;
 		texture.loadFromFile(pathToTexture, txt);
 		sprite.setTexture(texture);
 		sprite.setScale(scale);
+		boundingBox = sprite.getGlobalBounds();
+		IMMUNITYFRAMES = iframes;
 	}
-	virtual void Update(sf::RenderWindow& window) = 0;
-	virtual int onHit(Entity* Target) = 0;
+	virtual void Update(sf::RenderWindow& window) {
+		boundingBox.left = sprite.getPosition().x;
+		boundingBox.top = sprite.getPosition().y;
+	}
+	virtual int onHit(Entity* Target) {
+		if (!Target->isMortal()) return 0;
+		Target->dealDamage(damage);
+		Target->immunityFrames();
+	}
 	virtual EXIT_CODE draw(sf::RenderWindow& window) {
 		if (NULL == sprite.getTexture()) return EXIT_CODE::RETURNED_NULL;
 		window.draw(sprite);
@@ -32,11 +41,14 @@ public:
 	sf::Texture* getTexture() {
 		return &this->texture;
 	}
-	virtual void damage(int dmg) {
+	virtual void dealDamage(int dmg) {
 		this->health -= dmg;
 	}
 	bool isMortal() const {
 		return this->mortal;
+	}
+	void dealKnockback(short direction) {
+		sprite.move(-1 * ((direction * CONSTANTS::BASE_SPEED.x) - 0.5f), 0.3f);
 	}
 	int getHealth() const {
 		return this->health;
@@ -68,10 +80,11 @@ public:
 	}
 	EXIT_CODE gravityForce() {
 		if (!this->affectedByGravity()) return EXIT_CODE::NOT_AFFECTED_BY_GRAVITY;
-		this->sprite.move(0, 2.5 * CONSTANTS::GRAVITY);
+		this->sprite.move(0, 2.5f * CONSTANTS::GRAVITY);
 		while (Ground::collision_with_ground(this->sprite) == EXIT_CODE::SPRITE_COLLIDED) {
 			this->sprite.move(0, -0.1f);
 		}
+		return EXIT_CODE::RETURNED_NULL;
 	}
 	~Entity() {
 	}
@@ -88,6 +101,19 @@ public:
 	sf::FloatRect g_getBounds() {
 		return this->sprite.getGlobalBounds();
 	}
+	void immunityFrames() {
+		(immunity_frames <= IMMUNITYFRAMES) ? this->mortal = false : this->mortal = true;
+		(immunity_frames > IMMUNITYFRAMES) ? immunity_frames = 0 : immunity_frames++;
+	}
+	void immunityFrames(int iframes) {
+		(immunity_frames <= iframes) ? this->mortal = false : this->mortal = true;
+		(immunity_frames > iframes) ? immunity_frames = 0 : immunity_frames++;
+	}
+	/// <summary>
+	/// Adds effect to entity
+	/// Example player->addEffect(ptr_to_obj)
+	/// </summary>
+	/// <param name="ef">Pointer to effect object</param>
 	void addEffect(Effect* ef) {
 		currentEffects.push_back(ef);
 	}
@@ -101,6 +127,13 @@ public:
 	bool hasEffects() {
 		return currentEffects.empty();
 	}
+	bool hasEffect(Effect* effect) {
+		for (Effect* e : this->currentEffects) {
+			if (e == effect) return true;
+		}
+		return false;
+	}
+	bool isWeapon() { return weapon; }
 	/// <summary></summary>
 	/// <returns>a pointer to vector containing effects of entity</returns>
 	std::vector<Effect*>* getEffectVectorPointer() {
@@ -114,11 +147,20 @@ public:
 	bool isPlayer() const{
 		return this->player;
 	}
+	short getDirection() { return direction; }
 	protected:
+		int damage = 0;
+		int immunity_frames = 0;
+		int IMMUNITYFRAMES = 0;
 		std::vector<Effect*> currentEffects;
 		bool player = false;
-		bool mortal;
-		bool gravity;
+		bool mortal = false;
+		bool gravity = false;
+		bool weapon = false;
+		bool knockback = false;
+		bool gotHit = false;
+		short directionOld = 1;
+		short direction = 1;
 		sf::Sprite sprite;
 		sf::Texture texture;
 	};

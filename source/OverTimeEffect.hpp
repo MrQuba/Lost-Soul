@@ -18,11 +18,6 @@ public:
 		std::cout << duration << std::endl;
 		return Triple<int, int, bool>(0, 0, this->duration > 0);
 	}
-	//void clear(std::vector<Effect*>*efV) override {
-	//		if (this->duration <= 0) {
-	//			efV->erase(this);
-	//		}
-	//}
 protected:
 	int toChange;
 	int change;

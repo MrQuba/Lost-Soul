@@ -1,6 +1,7 @@
 #include "Entity.hpp"
 #include "Global.hpp"
 #include "Ground.hpp"
+#include "Collisions.hpp"
 #pragma once
 
 class TargetDummy : public Entity {

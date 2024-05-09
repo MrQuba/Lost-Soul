@@ -41,3 +41,5 @@
 *.ilk
 *.recipe
 *.vcxproj
+*.txt
+*.sarif

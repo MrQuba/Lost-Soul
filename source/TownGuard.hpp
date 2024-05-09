@@ -11,18 +11,19 @@ public:
 	: Entity(pathToTexture, txt, scale),
 		healthBar(Colour::getColour(COLOUR::HUD_BACKGROUND), Colour::getColour(COLOUR::BASE_HEALTH),
 			sf::Vector2f(hp, HUD_HEIGHT), sf::Vector2f(hp, HUD_HEIGHT), sf::Vector2f(1.f, 1.f)) {
-	this->mortal = true;
-	this->health = hp;
-	std::cout << this->health << std::endl;
-}
+		mortal = false;
+		knockback = true;
+		health = hp;
+		std::cout << this->health << std::endl;
+		damage = 2;
+	}
 	virtual void Update(sf::RenderWindow& window) override {
+		Entity::Update(window);
 		gravityForce();
 		directionOld = direction;
 		if (!isOnPlayer()) {
-			if (isPlayerOnLeft())
-				direction = -1;
-			else direction = 1;
-			if (direction != directionOld) this->sprite.scale(-1, 1);
+			isPlayerOnLeft() ? direction = -1 : direction = 1;
+			this->sprite.scale((direction != directionOld) ? -1 : 1, 1);
 			this->sprite.move((direction * CONSTANTS::BASE_SPEED.x) / 2, 0);
 		}
 		for (Entity* ent : *GLOBAL::ENTITIES_SET_POINTER)
@@ -30,12 +31,11 @@ public:
 		updateHUDElements();
 	}
 	virtual int onHit(Entity* Target) override {
-		// TODO, fix knockback logic
-		// this->sprite.move(-1 * ((direction * CONSTANTS::BASE_SPEED.x) - 0.5f), 0.3f);
-		if (!Target->isMortal()) return 0;
-		Target->damage(this->dealdamage);
-		Target->addEffect(&Effects::insanity);
-		return 0;
+		return (Entity::onHit(Target) == 0) ? 0 : [](Entity* t, int d, int dir) -> int {
+			t->dealDamage(d);
+			t->dealKnockback(dir);
+			return d;
+			}(Target, damage, direction);
 	}
 	EXIT_CODE drawHUDElements(sf::RenderWindow& window) const {
 		healthBar.drawHud(window);
@@ -47,13 +47,12 @@ public:
 		return EXIT_CODE::OPERATION_SUCCESFUL;
 	}
 	EXIT_CODE updateHUDElements() {
-		healthBar.updateHUD(sf::Vector2f(1, 1), this->health);
-		healthBar.scaleHud(direction, 1);
+		healthBar.updateHUD((float)this->health);
 		healthBar.setHudPos(
 			sf::Vector2f(
-				this->sprite.getPosition().x,
+				this->sprite.getPosition().x - ((healthBar.getSizeOfHUD().x / 2)),
 				this->sprite.getPosition().y - healthBar.getSizeOfHUD().y
-			));
+			), false);
 		return EXIT_CODE::OPERATION_SUCCESFUL;
 	}
 	bool isPlayerOnLeft() {
@@ -66,7 +65,4 @@ public:
 	}
 protected:
 	HUD healthBar;
-	short directionOld = 1;
-	int dealdamage = 5;
-	short direction = 1;
 };
